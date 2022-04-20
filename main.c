@@ -5,6 +5,8 @@
 #include <time.h>
 #include <math.h>
 
+int quit;
+
 int sz;
 int sw, sh;
 int w, h;
@@ -16,7 +18,7 @@ int g;
 SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Texture *display;
-
+SDL_Event event;
 
 int b[][4] = {
 	{0, 0, 0, 0},
@@ -114,16 +116,16 @@ int main(int argc, char *args[])
 {
 	srand(time(NULL));
 
-	sz = 2;
-	sw = 360 * sz;
-	sh = 646 * sz;
+	sz = 1;
+	sw = 96 * sz;
+	sh = 144 * sz;
 	w = sw;
 	h = sh;
 
 	SDL_Init(SDL_INIT_VIDEO);
 
 	SDL_CreateWindowAndRenderer(w, h, 0, &window, &renderer);
-	SDL_GetWindowSize(window, &w, &h);
+//	SDL_GetWindowSize(window, &w, &h);
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
@@ -135,17 +137,31 @@ int main(int argc, char *args[])
 	cx = sw / 2;
 	cy = sh / 2;
 
-	r = 64;
+	r = 8;
 	g = r * 2;
 
-	while (1)
+  quit=false;
+
+	while(!quit)
 	{
+    while(SDL_PollEvent(&event)) {
+      switch(event.type) {
+        case SDL_QUIT: quit=true; continue;
+        case SDL_KEYDOWN:
+          switch(event.key.keysym.sym) {
+            case SDLK_ESCAPE: quit=true; continue;
+            default: break;
+          }
+        break;        
+        default: break;
+      }
+    }
+
 		SDL_SetRenderTarget(renderer, display);
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
 
 		SDL_RenderClear(renderer);
-
 
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 80);
 		SDL_RenderDrawRect(renderer, &(SDL_Rect){ox, oy, sw, sh});
